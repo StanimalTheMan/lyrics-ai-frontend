@@ -85,20 +85,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center p-6">
-      <h1 className="text-xl font-bold mb-4">Music Translation App</h1>
+      <h1 className="text-xl font-bold mb-4">Song Analysis App</h1>
 
       <div className="flex gap-4 mt-4">
         <button
           onClick={handleGetSongs}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
-          Get Songs
-        </button>
-        <button
-          onClick={handleTranslate}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Translate
+          Get Song
         </button>
       </div>
 
