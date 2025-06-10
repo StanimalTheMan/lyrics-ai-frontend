@@ -90,6 +90,7 @@ export default function Home() {
       <div className="flex gap-4 mt-4">
         <button
           onClick={handleGetSongs}
+          style={{ cursor: "pointer" }}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Get Song
@@ -135,12 +136,14 @@ export default function Home() {
               <div className="mt-4 flex flex-col gap-2">
                 <button
                   onClick={speakText}
+                  style={{ cursor: "pointer" }}
                   className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
                   Pronounce Selected Text
                 </button>
                 <button
                   onClick={handleAnalyze}
+                  style={{ cursor: "pointer" }}
                   className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
                   Use OpenAI to analyze context of this word or phrase:
@@ -163,7 +166,8 @@ export default function Home() {
                 </p>
               )}
               <p className="whitespace-pre-wrap">
-                {explanation || "Select text and click analyze."}
+                {explanation ||
+                  "Click 'Use OpenAI to analyze context of this word or phrase'."}
               </p>
             </div>
           </div>
