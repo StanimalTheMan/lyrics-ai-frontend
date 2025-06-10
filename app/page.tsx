@@ -60,7 +60,7 @@ export default function Home() {
 
   const handleGetSongs = async () => {
     const res = await fetch(
-      `http://localhost:8080/api/songs/details?track=What%20is%20Love%3F&artist=TWICE`
+      `http://localhost:8080/api/songs/details?track=dtmf&artist=Bad Bunny`
     )
     const data = await res.json()
     console.log(data)
@@ -78,7 +78,7 @@ export default function Home() {
   const speakText = () => {
     if (!selectedText) return
     const speech = new SpeechSynthesisUtterance(selectedText)
-    speech.lang = "ko" // Korean
+    speech.lang = "es" // spanish
     speech.rate = 0.7
     speechSynthesis.speak(speech)
   }
@@ -151,12 +151,12 @@ export default function Home() {
                 >
                   Use OpenAI to analyze context of this word or phrase:
                 </button>
-                <button
+                {/* <button
                   onClick={handleRomanize}
                   className="bg-purple-500 text-white px-4 py-2 rounded"
                 >
                   Romanize Selected Text
-                </button>
+                </button> */}
               </div>
             </div>
 
