@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  images: {
+    domains: ["i.scdn.co", "your-other-image-source.com"], // Add the host(s) of your external URLs
+  },
+}
 
-export default nextConfig;
+export default nextConfig
