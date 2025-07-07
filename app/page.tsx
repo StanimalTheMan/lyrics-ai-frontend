@@ -58,10 +58,33 @@ export default function Home() {
     setExplanation(data.explanation)
   }
 
+  const handleSpeak = async (selectedText: string) => {
+    if (!selectedText) {
+      return
+    }
+
+    const response = await fetch("http://localhost:8080/api/speech/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: selectedText }),
+    })
+
+    if (!response.ok) {
+      console.error("Failed to generate speech")
+      return
+    }
+
+    const audioBlob = await response.blob()
+    const audioUrl = URL.createObjectURL(audioBlob)
+    const audio = new Audio(audioUrl)
+    audio.play()
+  }
+
   const handleGetSongs = async () => {
     const res = await fetch(
-      `http://localhost:8080/api/songs/details?track=dtmf&artist=Bad Bunny`
+      `http://localhost:8080/api/songs/details?track=everytime&artist=chen`
     )
+    console.log(res)
     const data = await res.json()
     console.log(data)
     setSong({ trackInfo: data.trackInfo, lyrics: data.lyrics })
@@ -140,6 +163,13 @@ export default function Home() {
                   className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
                   Pronounce Selected Text
+                </button>
+                <button
+                  onClick={() => handleSpeak(selectedText)}
+                  style={{ cursor: "pointer" }}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Play Audio
                 </button>
                 <button
                   onClick={handleAnalyze}
