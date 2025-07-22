@@ -1,11 +1,12 @@
 "use client"
-import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
 import LyricsWithActions, {
   Highlight,
 } from "../../components/LyricsWithActions"
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import Image from "next/image"
 
-type Song = {
+export type Song = {
   id: number
   title: string
   artist: string
@@ -81,6 +82,13 @@ export default function SongDetailPage() {
           <h1>
             {song.title} - {song.artist}
           </h1>
+          <Image
+            src={song.imageUrl}
+            alt={`${song.title} by ${song.artist}`}
+            width={300}
+            height={300}
+            className="rounded-lg"
+          />
           <LyricsWithActions
             lyrics={song.lyrics}
             highlights={highlights}

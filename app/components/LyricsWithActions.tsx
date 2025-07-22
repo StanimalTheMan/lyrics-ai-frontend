@@ -33,6 +33,7 @@ export default function LyricsWithActions({
   const [hoveredHighlightIndex, setHoveredHighlightIndex] = useState<
     number | null
   >(null)
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
 
   // Handle user text selection
   const handleMouseUp = () => {
@@ -120,7 +121,19 @@ export default function LyricsWithActions({
             position: "relative",
             borderRadius: 2,
           }}
-          onMouseEnter={() => setHoveredHighlightIndex(i)}
+          onMouseEnter={() => {
+            if (hoverTimeout) {
+              clearTimeout(hoverTimeout)
+              setHoverTimeout(null)
+            }
+            setHoveredHighlightIndex(i)
+          }}
+          onMouseLeave={() => {
+            const timeout = setTimeout(() => {
+              setHoveredHighlightIndex(null)
+            }, 300) // 300ms delay before closing
+            setHoverTimeout(timeout)
+          }}
         >
           {lyrics.slice(h.startIndex, h.endIndex)}
 
@@ -129,13 +142,24 @@ export default function LyricsWithActions({
               style={{
                 position: "fixed",
                 background: "#000",
+                color: "#fff",
                 border: "1px solid #ccc",
                 borderRadius: 4,
                 zIndex: 1000,
                 padding: 8,
-                display: "flex",
-                gap: 8,
+                maxWidth: "300px",
+                maxHeight: "200px",
+                overflowY: "auto",
+                wordBreak: "break-word",
+                whiteSpace: "pre-wrap",
                 boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+                scrollbarWidth: "thin",
+              }}
+              onMouseEnter={() => {
+                if (hoverTimeout) {
+                  clearTimeout(hoverTimeout)
+                  setHoverTimeout(null)
+                }
               }}
               onMouseLeave={() => setHoveredHighlightIndex(null)}
             >

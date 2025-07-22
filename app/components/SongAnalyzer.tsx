@@ -2,34 +2,17 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import { Song } from "../songs/[id]/page"
 
 export default function SongAnalyzer() {
-  const [translation, setTranslation] = useState(null)
-  const [romanizedTranslation, setRomanizedTranslation] = useState(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchResulits, setSearchResults] = useState<Song[]>([])
   const [song, setSong] = useState({})
   const [selectedText, setSelectedText] = useState("")
   const [explanation, setExplanation] = useState("")
 
-  const handleTranslate = async () => {
-    if (!selectedText) return
-    const response = await fetch("http://localhost:8000/translate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: selectedText, target_lang: "en" }),
-    })
-    const data = await response.json()
-    setTranslation(data.translation)
-  }
-
-  const handleRomanize = async () => {
-    if (!selectedText) return
-    const response = await fetch("http://localhost:8000/romanize", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: selectedText }),
-    })
-    const data = await response.json()
-    setRomanizedTranslation(data.romanization)
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return
   }
 
   const handleAnalyze = async () => {
@@ -43,23 +26,23 @@ export default function SongAnalyzer() {
     setExplanation(data.explanation)
   }
 
-  const handleSpeak = async (text: string) => {
-    if (!text) return
-    const response = await fetch("http://localhost:8080/api/speech/speak", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    })
+  // const handleSpeak = async (text: string) => {
+  //   if (!text) return
+  //   const response = await fetch("http://localhost:8080/api/speech/speak", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({ text }),
+  //   })
 
-    if (!response.ok) {
-      console.error("Failed to generate speech")
-      return
-    }
+  //   if (!response.ok) {
+  //     console.error("Failed to generate speech")
+  //     return
+  //   }
 
-    const audioBlob = await response.blob()
-    const audioUrl = URL.createObjectURL(audioBlob)
-    new Audio(audioUrl).play()
-  }
+  //   const audioBlob = await response.blob()
+  //   const audioUrl = URL.createObjectURL(audioBlob)
+  //   new Audio(audioUrl).play()
+  // }
 
   const handleGetSongs = async () => {
     const res = await fetch(
@@ -80,13 +63,13 @@ export default function SongAnalyzer() {
     if (selection) setSelectedText(selection)
   }
 
-  const speakText = () => {
-    if (!selectedText) return
-    const speech = new SpeechSynthesisUtterance(selectedText)
-    speech.lang = "es"
-    speech.rate = 0.7
-    speechSynthesis.speak(speech)
-  }
+  // const speakText = () => {
+  //   if (!selectedText) return
+  //   const speech = new SpeechSynthesisUtterance(selectedText)
+  //   speech.lang = "es"
+  //   speech.rate = 0.7
+  //   speechSynthesis.speak(speech)
+  // }
 
   return (
     <div className="w-full max-w-5xl">
@@ -96,8 +79,6 @@ export default function SongAnalyzer() {
       >
         Get Song
       </button>
-
-      {translation && <p className="mt-4">Translation: {translation}</p>}
 
       {Object.keys(song).length > 0 && (
         <div className="flex flex-col gap-6">
@@ -134,7 +115,7 @@ export default function SongAnalyzer() {
               </p>
 
               <div className="mt-4 flex flex-col gap-2">
-                <button
+                {/* <button
                   onClick={speakText}
                   className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
@@ -145,7 +126,7 @@ export default function SongAnalyzer() {
                   className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
                   Play Audio
-                </button>
+                </button> */}
                 <button
                   onClick={handleAnalyze}
                   className="bg-blue-500 text-white px-4 py-2 rounded"
