@@ -1,26 +1,158 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Auth Header */
+.auth-header {
+  background: #1a1a1a;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.logo {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.auth-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.auth-link {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid white;
+}
+
+.auth-link.register {
+  background: #4CAF50;
+  border: none;
+}
+
+.logout-btn {
+  background: #ff3333;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Auth Pages */
+.auth-page {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.auth-page input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.auth-page button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.error-message {
+  color: #ff3333;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background: #ffeeee;
+  border-radius: 4px;
+}
+
+.success-message {
+  color: #4CAF50;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background: #eeffee;
+  border-radius: 4px;
+}
+
+/* Page Content */
+.page-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* User Songs */
+.user-songs {
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.song-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.song-item {
+  transition: transform 0.2s;
+}
+
+.song-item:hover {
+  transform: translateY(-5px);
+}
+
+.song-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.song-image-container {
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.song-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.song-info {
+  margin-top: 0.5rem;
+}
+
+.song-title {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.song-artist {
+  color: #666;
+  margin: 0.25rem 0 0;
 }
