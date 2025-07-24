@@ -24,7 +24,6 @@ export default function LoginPage() {
         const errorData = await res.json()
         throw new Error(errorData.message || "Login failed")
       }
-
       const { token } = await res.json()
       login(token)
       router.push("/")

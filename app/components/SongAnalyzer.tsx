@@ -2,9 +2,11 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Song } from "../songs/[id]/page"
+import { useAuth } from "@/context/AuthContext"
+
 import "./SongAnalyzer.css"
 
-function SongAnalyzer() {
+function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
   const [searchParams, setSearchParams] = useState({ track: "", artist: "" })
   const [song, setSong] = useState<Partial<Song>>({})
   const [selectedText, setSelectedText] = useState("")
@@ -15,6 +17,8 @@ function SongAnalyzer() {
   const [saveError, setSaveError] = useState("")
   const [saveSuccess, setSaveSuccess] = useState("")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+
+  const { token } = useAuth()
 
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -100,7 +104,6 @@ function SongAnalyzer() {
     setSaveSuccess("")
 
     try {
-      const token = localStorage.getItem("token")
       if (!token) throw new Error("You must be logged in to save songs")
 
       const response = await fetch(
@@ -119,6 +122,7 @@ function SongAnalyzer() {
       }
 
       setSaveSuccess("Song saved to your collection!")
+      onSaveSuccess()
     } catch (error) {
       setSaveError(
         error instanceof Error ? error.message : "Failed to save song"

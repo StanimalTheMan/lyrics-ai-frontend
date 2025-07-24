@@ -1,37 +1,14 @@
 "use client"
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Song } from "../songs/[id]/page"
 
-export default function UserSongs({ token }: { token: string }) {
-  const [songs, setSongs] = useState<Song[]>([])
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setLoading(true)
-    fetch("http://localhost:8080/api/usersongs", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch songs")
-        return res.json()
-      })
-      .then((data) => setSongs(Array.isArray(data) ? data : []))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [token])
-
+export default function UserSongs({ songs }: { songs: Song[] }) {
   return (
     <div className="user-songs">
       <h2 className="section-title">Your Saved Songs</h2>
 
-      {loading ? (
-        <p>Loading your songs...</p>
-      ) : error ? (
-        <div className="error-message">{error}</div>
-      ) : songs.length === 0 ? (
+      {songs.length === 0 ? (
         <p>No saved songs yet</p>
       ) : (
         <ul className="song-list">
