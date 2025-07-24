@@ -96,16 +96,18 @@ export default function SongDetailPage() {
           <div
             style={{ display: "flex", justifyContent: "center", width: "100%" }}
           >
-            <Image
-              src={song.imageUrl}
-              alt={`${song.title} by ${song.artist}`}
-              width={300}
-              height={300}
-              style={{
-                borderRadius: "0.5rem",
-                objectFit: "cover",
-              }}
-            />
+            <a href={song.spotifyUrl} target="_blank" rel="noopener noreferrer">
+              <Image
+                src={song.imageUrl}
+                alt={`${song.title} by ${song.artist}`}
+                width={300}
+                height={300}
+                style={{
+                  borderRadius: "0.5rem",
+                  objectFit: "cover",
+                }}
+              />
+            </a>
           </div>
           <LyricsWithActions
             lyrics={song.lyrics}

@@ -27,26 +27,46 @@
   gap: 1rem;
 }
 
-.auth-link {
-  color: white;
-  text-decoration: none;
+/* Normalize and unify button and link styles */
+.auth-btn {
+  display: inline-block;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.2;
+  box-sizing: border-box;
+  text-align: center;
+  vertical-align: middle;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   border: 1px solid white;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, opacity 0.2s;
 }
 
-.auth-link.register {
+/* Remove default button margin and border for buttons */
+button.auth-btn {
+  margin: 0;
+  border: none;
+}
+
+/* Green for register */
+.auth-btn.register {
   background: #4CAF50;
   border: none;
 }
 
-.logout-btn {
+/* Red for logout */
+.auth-btn.logout {
   background: #ff3333;
-  color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+}
+
+/* Hover effect */
+.auth-btn:hover {
+  opacity: 0.9;
 }
 
 /* Auth Pages */
@@ -144,7 +164,9 @@
 }
 
 .song-info {
+  text-align: center;
   margin-top: 0.5rem;
+  padding-top: 1rem;
 }
 
 .song-title {
@@ -155,33 +177,4 @@
 .song-artist {
   color: #666;
   margin: 0.25rem 0 0;
-}
-
-/* Shared auth button style */
-.auth-btn {
-  color: white;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: 1px solid white;
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-/* Green for register */
-.auth-btn.register {
-  background: #4CAF50;
-  border: none;
-}
-
-/* Red for logout */
-.auth-btn.logout {
-  background: #ff3333;
-  border: none;
-}
-
-/* Optional: Add hover effects */
-.auth-btn:hover {
-  opacity: 0.9;
 }
