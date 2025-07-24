@@ -61,8 +61,9 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
 
       const data = await response.json()
       setSong(data)
-    } catch (error) {
-      if (error.name !== "AbortError") {
+    } catch (error: unknown) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        // Now error is checked safely
         setSearchError(error instanceof Error ? error.message : "Search failed")
       }
     } finally {
