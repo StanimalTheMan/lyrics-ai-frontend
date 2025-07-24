@@ -29,9 +29,12 @@ export default function SongDetailPage() {
 
   useEffect(() => {
     if (!id || !token) return
-    fetch(`http://localhost:8080/api/songs/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(
+      `http://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
       .then((res) => {
         if (res.status === 401) {
           setError("Unauthorized. Please log in again.")
@@ -47,9 +50,12 @@ export default function SongDetailPage() {
 
   useEffect(() => {
     if (!id || !token) return
-    fetch(`http://localhost:8080/api/songs/${id}/highlights`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(
+      `http://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${id}/highlights`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
       .then((res) => {
         if (res.status === 401) {
           setError("Unauthorized. Please log in again.")

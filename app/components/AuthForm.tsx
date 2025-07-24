@@ -19,8 +19,8 @@ export default function AuthForm({ onAuthSuccess }: Props) {
     setError("")
     setSuccess("")
     const endpoint = isRegister
-      ? "http://localhost:8080/api/auth/register"
-      : "http://localhost:8080/api/auth/login"
+      ? "http://lyrics-ai-backend-production.up.railway.app:8080/api/auth/register"
+      : "http://lyrics-ai-backend-production.up.railway.app:8080/api/auth/login"
     try {
       const payload = isRegister
         ? { firstName, lastName, email, password }

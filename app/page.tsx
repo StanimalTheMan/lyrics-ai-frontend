@@ -11,9 +11,12 @@ export default function HomePage() {
   const fetchUserSongs = async () => {
     if (!token) return
     try {
-      const res = await fetch("http://localhost:8080/api/usersongs", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await fetch(
+        "http://lyrics-ai-backend-production.up.railway.app:8080/api/usersongs",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
       if (!res.ok) throw new Error("Failed to fetch user songs")
       const data = await res.json()
       setUserSongs(data)
