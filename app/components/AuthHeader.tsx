@@ -23,7 +23,7 @@ export default function AuthHeader() {
   return (
     <header className="auth-header">
       <Link href="/" className="logo">
-        My App
+        Lyrics AI
       </Link>
 
       {token ? (
