@@ -78,17 +78,35 @@ export default function SongDetailPage() {
   return (
     <div>
       {song && (
-        <>
-          <h1>
-            {song.title} - {song.artist}
-          </h1>
-          <Image
-            src={song.imageUrl}
-            alt={`${song.title} by ${song.artist}`}
-            width={300}
-            height={300}
-            className="rounded-lg"
-          />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1rem",
+            padding: "1rem",
+          }}
+        >
+          <div style={{ width: "100%", textAlign: "center" }}>
+            <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              {song.title} - {song.artist}
+            </h1>
+          </div>
+          <div
+            style={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
+            <Image
+              src={song.imageUrl}
+              alt={`${song.title} by ${song.artist}`}
+              width={300}
+              height={300}
+              style={{
+                borderRadius: "0.5rem",
+                objectFit: "cover",
+              }}
+            />
+          </div>
           <LyricsWithActions
             lyrics={song.lyrics}
             highlights={highlights}
@@ -96,7 +114,7 @@ export default function SongDetailPage() {
             token={token!}
             songId={id as string}
           />
-        </>
+        </div>
       )}
     </div>
   )

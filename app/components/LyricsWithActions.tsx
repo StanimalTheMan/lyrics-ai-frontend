@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef, useState } from "react"
+import React, { useRef, useState, useEffect } from "react"
 
 export type Highlight = {
   id?: number
@@ -34,6 +34,42 @@ export default function LyricsWithActions({
     number | null
   >(null)
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
+
+  // State for tooltip position
+  const [tooltipPosition, setTooltipPosition] = useState<{
+    top: number
+    left: number
+  }>({
+    top: 0,
+    left: 0,
+  })
+
+  // Update tooltip position when hoveredHighlightIndex changes
+  useEffect(() => {
+    if (hoveredHighlightIndex === null) return
+    if (!lyricsRef.current) return
+
+    const highlightSpans = lyricsRef.current.querySelectorAll("span")
+    const el = highlightSpans[hoveredHighlightIndex]
+    if (!el) return
+
+    const rect = el.getBoundingClientRect()
+    const padding = 10
+    const tooltipWidth = 300
+    const tooltipHeight = 200
+
+    let top = rect.bottom + 5
+    let left = rect.left
+
+    if (left + tooltipWidth + padding > window.innerWidth) {
+      left = window.innerWidth - tooltipWidth - padding
+    }
+    if (top + tooltipHeight + padding > window.innerHeight) {
+      top = rect.top - tooltipHeight - 5
+    }
+
+    setTooltipPosition({ top, left })
+  }, [hoveredHighlightIndex])
 
   // Handle user text selection
   const handleMouseUp = () => {
@@ -141,6 +177,8 @@ export default function LyricsWithActions({
             <div
               style={{
                 position: "fixed",
+                top: tooltipPosition.top,
+                left: tooltipPosition.left,
                 background: "#000",
                 color: "#fff",
                 border: "1px solid #ccc",

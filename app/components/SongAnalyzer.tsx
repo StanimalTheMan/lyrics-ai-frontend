@@ -21,6 +21,9 @@ function SongAnalyzer() {
   const [saveError, setSaveError] = useState("")
   const [saveSuccess, setSaveSuccess] = useState("")
 
+  // imperative client state for analysis loading state
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+
   // Add cleanup on unmount
   useEffect(() => {
     return () => {
@@ -77,18 +80,25 @@ function SongAnalyzer() {
     if (!song.title || !selectedText) {
       return
     }
-    const response = await fetch("http://localhost:8080/api/analysis", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        word: selectedText,
-        context: song.lyrics,
-        track: song.title,
-        artist: song.artist,
-      }),
-    })
-    const data = await response.json()
-    setExplanation(data.explanation)
+    setIsAnalyzing(true)
+    try {
+      const response = await fetch("http://localhost:8080/api/analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          word: selectedText,
+          context: song.lyrics,
+          track: song.title,
+          artist: song.artist,
+        }),
+      })
+      const data = await response.json()
+      setExplanation(data.explanation)
+    } catch (error) {
+      setExplanation("Failed to get explanation.")
+    } finally {
+      setIsAnalyzing(false)
+    }
   }
 
   const handleSaveSong = async () => {
@@ -208,10 +218,10 @@ function SongAnalyzer() {
                   <div className="mt-4">
                     <button
                       onClick={handleAnalyze}
+                      disabled={!selectedText || isAnalyzing}
                       className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-                      disabled={!selectedText}
                     >
-                      Analyze Selection
+                      {isAnalyzing ? "Analyzing..." : "Analyze Selection"}
                     </button>
                     {selectedText && (
                       <div className="mt-2 text-sm text-blue-200">
@@ -229,6 +239,7 @@ function SongAnalyzer() {
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-500 hover:bg-green-600"
                 } text-white`}
+                style={{ cursor: "pointer" }}
               >
                 {isSaving ? "Saving..." : "Save to My Songs"}
               </button>
@@ -244,9 +255,15 @@ function SongAnalyzer() {
           {/* Explanation Block */}
           <div className="flex-1 bg-black text-white p-4 rounded shadow border max-h-[500px] overflow-auto">
             <h2 className="text-lg font-semibold mb-2">Explanation</h2>
-            <p className="whitespace-pre-wrap">
-              {explanation || "Select text in lyrics and click 'Analyze'"}
-            </p>
+            {isAnalyzing ? (
+              <p className="animate-pulse text-gray-400">
+                Loading explanation...
+              </p>
+            ) : (
+              <p className="whitespace-pre-wrap">
+                {explanation || "Select text in lyrics and click 'Analyze'"}
+              </p>
+            )}
           </div>
         </div>
       )}

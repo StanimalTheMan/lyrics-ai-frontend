@@ -156,3 +156,32 @@
   color: #666;
   margin: 0.25rem 0 0;
 }
+
+/* Shared auth button style */
+.auth-btn {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid white;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Green for register */
+.auth-btn.register {
+  background: #4CAF50;
+  border: none;
+}
+
+/* Red for logout */
+.auth-btn.logout {
+  background: #ff3333;
+  border: none;
+}
+
+/* Optional: Add hover effects */
+.auth-btn:hover {
+  opacity: 0.9;
+}

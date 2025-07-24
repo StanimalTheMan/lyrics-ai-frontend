@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useAuth } from "../../context/AuthContext"
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" })
@@ -8,6 +9,7 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const registered = searchParams.get("registered")
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,7 +26,7 @@ export default function LoginPage() {
       }
 
       const { token } = await res.json()
-      localStorage.setItem("token", token)
+      login(token)
       router.push("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed")
