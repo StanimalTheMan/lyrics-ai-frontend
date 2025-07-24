@@ -94,7 +94,7 @@ export default function LyricsWithActions({
       por: "pt-PT",
     }
 
-    setDetectedLang(langMap[langCode] || "en-US")
+    setDetectedLang(langMap[langCode as keyof typeof langMap] || "en-US")
   }, [lyrics])
 
   // Handle user text selection
