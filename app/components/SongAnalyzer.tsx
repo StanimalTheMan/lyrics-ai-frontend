@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Song } from "../songs/[id]/page"
 
-export default function SongAnalyzer() {
+function SongAnalyzer() {
   const [searchParams, setSearchParams] = useState({
     track: "",
     artist: "",
@@ -16,6 +16,11 @@ export default function SongAnalyzer() {
 
   const abortControllerRef = useRef<AbortController | null>(null)
 
+  // state for linking / saving songs to authenticated user
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState("")
+  const [saveSuccess, setSaveSuccess] = useState("")
+
   // Add cleanup on unmount
   useEffect(() => {
     return () => {
@@ -27,7 +32,7 @@ export default function SongAnalyzer() {
 
   const handleSearch = async () => {
     if (!searchParams.track.trim() || !searchParams.artist.trim()) {
-      setSearchError("Please enter both track and artist")
+      setSearchError("Please enter both song title and artist")
       return
     }
 
@@ -49,8 +54,6 @@ export default function SongAnalyzer() {
         { signal: abortControllerRef.current.signal } // Add abort signal
       )
 
-      console.log(response.ok)
-
       if (!response.ok)
         throw new Error(
           response.status === 404
@@ -71,7 +74,6 @@ export default function SongAnalyzer() {
   }
 
   const handleAnalyze = async () => {
-    console.log("Analyze button clicked")
     if (!song.title || !selectedText) {
       return
     }
@@ -85,9 +87,49 @@ export default function SongAnalyzer() {
         artist: song.artist,
       }),
     })
-    console.log("fff")
     const data = await response.json()
     setExplanation(data.explanation)
+  }
+
+  const handleSaveSong = async () => {
+    if (!song.id) {
+      setSaveError("Song ID is missing")
+      return
+    }
+
+    setIsSaving(true)
+    setSaveError("")
+    setSaveSuccess("")
+
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        throw new Error("You must be logged in to save songs")
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/api/usersongs/${song.id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(errorText || "Failed to save song")
+      }
+
+      setSaveSuccess("Song saved to your collection!")
+    } catch (error) {
+      setSaveError(
+        error instanceof Error ? error.message : "Failed to save song"
+      )
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -139,14 +181,9 @@ export default function SongAnalyzer() {
       {song.title && (
         <div className="flex flex-col gap-6">
           <div className="text-center">
-            <a
-              href={song.spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block"
-            >
+            <div className="inline-block">
               <Image
-                src={song.imageUrl}
+                src={song.imageUrl!}
                 alt={`${song.title} by ${song.artist}`}
                 width={300}
                 height={300}
@@ -155,48 +192,66 @@ export default function SongAnalyzer() {
               <div className="mt-2 text-lg font-medium">
                 {song.title} - {song.artist}
               </div>
-            </a>
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Lyrics Block */}
+                <div className="flex-1 bg-black text-white p-4 rounded shadow border max-h-[500px] overflow-auto">
+                  <p
+                    onMouseUp={() => {
+                      const selection = window.getSelection()?.toString()
+                      if (selection) setSelectedText(selection)
+                    }}
+                    className="cursor-pointer select-text whitespace-pre-wrap"
+                  >
+                    {song.lyrics}
+                  </p>
+
+                  <div className="mt-4">
+                    <button
+                      onClick={handleAnalyze}
+                      className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                      disabled={!selectedText}
+                    >
+                      Analyze Selection
+                    </button>
+                    {selectedText && (
+                      <div className="mt-2 text-sm text-blue-200">
+                        Selected: {selectedText}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleSaveSong}
+                disabled={isSaving || !song.id}
+                className={`mt-2 px-4 py-2 rounded ${
+                  isSaving || !song.id
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                } text-white`}
+              >
+                {isSaving ? "Saving..." : "Save to My Songs"}
+              </button>
+              {saveSuccess && (
+                <p className="text-green-500 text-sm mt-1">{saveSuccess}</p>
+              )}
+              {saveError && (
+                <p className="text-red-500 text-sm mt-1">{saveError}</p>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Lyrics Block */}
-            <div className="flex-1 bg-black text-white p-4 rounded shadow border max-h-[500px] overflow-auto">
-              <p
-                onMouseUp={() => {
-                  const selection = window.getSelection()?.toString()
-                  if (selection) setSelectedText(selection)
-                }}
-                className="cursor-pointer select-text whitespace-pre-wrap"
-              >
-                {song.lyrics}
-              </p>
-
-              <div className="mt-4">
-                <button
-                  onClick={handleAnalyze}
-                  className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-                  disabled={!selectedText}
-                >
-                  Analyze Selection
-                </button>
-                {selectedText && (
-                  <div className="mt-2 text-sm text-blue-200">
-                    Selected: {selectedText}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Explanation Block */}
-            <div className="flex-1 bg-black text-white p-4 rounded shadow border max-h-[500px] overflow-auto">
-              <h2 className="text-lg font-semibold mb-2">Explanation</h2>
-              <p className="whitespace-pre-wrap">
-                {explanation || "Select text in lyrics and click 'Analyze'"}
-              </p>
-            </div>
+          {/* Explanation Block */}
+          <div className="flex-1 bg-black text-white p-4 rounded shadow border max-h-[500px] overflow-auto">
+            <h2 className="text-lg font-semibold mb-2">Explanation</h2>
+            <p className="whitespace-pre-wrap">
+              {explanation || "Select text in lyrics and click 'Analyze'"}
+            </p>
           </div>
         </div>
       )}
     </div>
   )
 }
+
+export default SongAnalyzer
