@@ -22,7 +22,7 @@ export default function UserSongs({
       .then((data) => setSongs(Array.isArray(data) ? data : []))
       .catch(() => setError("Failed to fetch songs"))
   }, [token])
-  console.log(songs)
+
   return (
     <div>
       <h2>Your Saved Songs</h2>

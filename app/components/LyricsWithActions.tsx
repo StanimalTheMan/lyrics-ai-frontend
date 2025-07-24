@@ -91,7 +91,7 @@ export default function LyricsWithActions({
   const handlePronounce = () => {
     if (!selection) return
     const utter = new window.SpeechSynthesisUtterance(selection.text)
-    utter.lang = "en"
+    utter.lang = "ko"
     window.speechSynthesis.speak(utter)
     setSelection(null)
   }
