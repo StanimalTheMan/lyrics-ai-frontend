@@ -1,5 +1,6 @@
 "use client"
 import React, { useRef, useState, useEffect } from "react"
+import { franc } from "franc"
 
 export type Highlight = {
   id?: number
@@ -29,6 +30,9 @@ export default function LyricsWithActions({
     end: number
     rect: DOMRect
   }>(null)
+
+  // Detect language once lyrics load
+  const [detectedLang, setDetectedLang] = useState("en")
 
   const [hoveredHighlightIndex, setHoveredHighlightIndex] = useState<
     number | null
@@ -70,6 +74,28 @@ export default function LyricsWithActions({
 
     setTooltipPosition({ top, left })
   }, [hoveredHighlightIndex])
+
+  // useEffect to detect language
+  useEffect(() => {
+    if (!lyrics) return
+    const langCode = franc(lyrics)
+
+    // map ISO 693-3 code franc library returns to language that speech synthesis browser tool can understand
+    const langMap = {
+      eng: "en-US",
+      spa: "es-ES",
+      kor: "ko-KR",
+      fra: "fr-FR",
+      deu: "de-DE",
+      jpn: "ja-JP",
+      cmn: "zh-CN",
+      rus: "ru-RU",
+      ita: "it-IT",
+      por: "pt-PT",
+    }
+
+    setDetectedLang(langMap[langCode] || "en-US")
+  }, [lyrics])
 
   // Handle user text selection
   const handleMouseUp = () => {
@@ -127,7 +153,8 @@ export default function LyricsWithActions({
   const handlePronounce = () => {
     if (!selection) return
     const utter = new window.SpeechSynthesisUtterance(selection.text)
-    utter.lang = "ko"
+    utter.lang = detectedLang
+    utter.rate = 0.7
     window.speechSynthesis.speak(utter)
     setSelection(null)
   }
