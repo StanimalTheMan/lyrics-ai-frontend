@@ -1,21 +1,25 @@
 "use client"
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "../../context/AuthContext"
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" })
   const [error, setError] = useState("")
+  const [registered, setRegistered] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const registered = searchParams.get("registered")
   const { login } = useAuth()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setRegistered(params.get("registered") === "true")
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       const res = await fetch(
-        "http://lyrics-ai-backend-production.up.railway.app:8080/api/auth/login",
+        "https://lyrics-ai-backend-production.up.railway.app:8080/api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
