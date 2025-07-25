@@ -12,7 +12,7 @@ export default function HomePage() {
     if (!token) return
     try {
       const res = await fetch(
-        "http://lyrics-ai-backend-production.up.railway.app/api/usersongs",
+        "https://lyrics-ai-backend-production.up.railway.app/api/usersongs",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
