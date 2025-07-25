@@ -194,7 +194,7 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
               onChange={(e) =>
                 setSearchParams({ ...searchParams, artist: e.target.value })
               }
-              placeholder="e.g. badbunny"
+              placeholder="e.g. bad bunny"
               disabled={isSearching}
             />
           </div>
