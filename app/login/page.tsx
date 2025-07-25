@@ -19,7 +19,7 @@ export default function LoginPage() {
     e.preventDefault()
     try {
       const res = await fetch(
-        "https://lyrics-ai-backend-production.up.railway.app:8080/api/auth/login",
+        "https://lyrics-ai-backend-production.up.railway.app/api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
