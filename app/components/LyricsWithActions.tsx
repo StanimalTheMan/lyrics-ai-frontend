@@ -48,6 +48,9 @@ export default function LyricsWithActions({
     left: 0,
   })
 
+  // Loading state for analyze button
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+
   // Update tooltip position when hoveredHighlightIndex changes
   useEffect(() => {
     if (hoveredHighlightIndex === null) return
@@ -80,7 +83,6 @@ export default function LyricsWithActions({
     if (!lyrics) return
     const langCode = franc(lyrics)
 
-    // map ISO 693-3 code franc library returns to language that speech synthesis browser tool can understand
     const langMap = {
       eng: "en-US",
       spa: "es-ES",
@@ -122,32 +124,40 @@ export default function LyricsWithActions({
   const handleHighlightAnalyze = async () => {
     if (!selection || !token) return
 
-    const res = await fetch(
-      `https://lyrics-ai-backend-production.up.railway.app/api/songs/${songId}/highlights`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          startIndex: selection.start,
-          endIndex: selection.end,
-          selectedText: selection.text,
-          explanation: "",
-        }),
+    setIsAnalyzing(true)
+    try {
+      const res = await fetch(
+        `https://lyrics-ai-backend-production.up.railway.app/api/songs/${songId}/highlights`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            startIndex: selection.start,
+            endIndex: selection.end,
+            selectedText: selection.text,
+            explanation: "",
+          }),
+        }
+      )
+
+      if (res.status === 401) {
+        alert("Unauthorized. Please log in again.")
+        setSelection(null)
+        setIsAnalyzing(false)
+        return
       }
-    )
 
-    if (res.status === 401) {
-      alert("Unauthorized. Please log in again.")
+      const data = await res.json()
+      onAddHighlight(data)
       setSelection(null)
-      return
+    } catch {
+      alert("Failed to analyze highlight. Please try again.")
+    } finally {
+      setIsAnalyzing(false)
     }
-
-    const data = await res.json()
-    onAddHighlight(data)
-    setSelection(null)
   }
 
   const handlePronounce = () => {
@@ -283,10 +293,29 @@ export default function LyricsWithActions({
           }}
         >
           <button
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: isAnalyzing ? "not-allowed" : "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
             onClick={handleHighlightAnalyze}
+            disabled={isAnalyzing}
           >
-            Highlight & Analyze
+            {isAnalyzing ? "Analyzing..." : "Highlight & Analyze"}
+            {isAnalyzing && (
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid #fff",
+                  borderTop: "2px solid transparent",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite",
+                }}
+              />
+            )}
           </button>
           <button style={{ cursor: "pointer" }} onClick={handlePronounce}>
             Pronounce
@@ -297,6 +326,18 @@ export default function LyricsWithActions({
           >
             Cancel
           </button>
+
+          {/* Spinner animation style */}
+          <style jsx global>{`
+            @keyframes spin {
+              from {
+                transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+              }
+            }
+          `}</style>
         </div>
       )}
     </div>
