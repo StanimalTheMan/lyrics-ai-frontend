@@ -23,6 +23,7 @@ export default function RegisterPage() {
           body: JSON.stringify(form),
         }
       )
+      console.log("Registered successfully")
 
       if (!res.ok) {
         const errorData = await res.json()
