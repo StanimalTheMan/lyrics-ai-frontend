@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Song } from "../songs/[id]/page"
 import { useAuth } from "@/context/AuthContext"
+import { franc } from "franc"
 
 import "./SongAnalyzer.css"
 
@@ -22,13 +23,36 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
 
   const abortControllerRef = useRef<AbortController | null>(null)
 
+  // Language detection state
+  const [detectedLang, setDetectedLang] = useState("en-US")
+
   useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-      }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
     }
   }, [])
+
+  // Detect language of lyrics when song.lyrics changes
+  useEffect(() => {
+    if (!song.lyrics) return
+
+    const langCode = franc(song.lyrics)
+
+    const langMap: Record<string, string> = {
+      eng: "en-US",
+      spa: "es-ES",
+      kor: "ko-KR",
+      fra: "fr-FR",
+      deu: "de-DE",
+      jpn: "ja-JP",
+      cmn: "zh-CN",
+      rus: "ru-RU",
+      ita: "it-IT",
+      por: "pt-PT",
+    }
+
+    setDetectedLang(langMap[langCode] || "en-US")
+  }, [song.lyrics])
 
   const handleSearch = async () => {
     if (!searchParams.track.trim() || !searchParams.artist.trim()) {
@@ -63,7 +87,6 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
       setSong(data)
     } catch (error: unknown) {
       if (!(error instanceof DOMException && error.name === "AbortError")) {
-        // Now error is checked safely
         setSearchError(error instanceof Error ? error.message : "Search failed")
       }
     } finally {
@@ -134,6 +157,15 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
     } finally {
       setIsSaving(false)
     }
+  }
+
+  // Pronounce selected text using Web Speech API
+  const handlePronounce = () => {
+    if (!selectedText) return
+    const utter = new SpeechSynthesisUtterance(selectedText)
+    utter.lang = detectedLang
+    utter.rate = 0.7
+    window.speechSynthesis.speak(utter)
   }
 
   return (
@@ -207,6 +239,15 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
               >
                 {isAnalyzing ? "Analyzing..." : "Analyze Selection"}
               </button>
+
+              <button
+                onClick={handlePronounce}
+                disabled={!selectedText}
+                style={{ marginLeft: "10px" }}
+              >
+                Pronounce Selection
+              </button>
+
               {selectedText && (
                 <div className="selected-text">Selected: {selectedText}</div>
               )}
