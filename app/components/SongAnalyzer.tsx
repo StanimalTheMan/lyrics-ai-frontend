@@ -46,7 +46,7 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
 
     try {
       const response = await fetch(
-        `http://lyrics-ai-backend-production.up.railway.app:8080/api/songs/details?track=${encodeURIComponent(
+        `https://lyrics-ai-backend-production.up.railway.app:8080/api/songs/details?track=${encodeURIComponent(
           searchParams.track
         )}&artist=${encodeURIComponent(searchParams.artist)}`,
         { signal: abortControllerRef.current.signal }
@@ -76,7 +76,7 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
     setIsAnalyzing(true)
     try {
       const response = await fetch(
-        "http://lyrics-ai-backend-production.up.railway.app:8080/api/analysis",
+        "https://lyrics-ai-backend-production.up.railway.app:8080/api/analysis",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -111,7 +111,7 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
       if (!token) throw new Error("You must be logged in to save songs")
 
       const response = await fetch(
-        `http://lyrics-ai-backend-production.up.railway.app:8080/api/usersongs/${song.id}`,
+        `https://lyrics-ai-backend-production.up.railway.app:8080/api/usersongs/${song.id}`,
         {
           method: "POST",
           headers: {

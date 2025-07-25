@@ -123,7 +123,7 @@ export default function LyricsWithActions({
     if (!selection || !token) return
 
     const res = await fetch(
-      `http://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${songId}/highlights`,
+      `https://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${songId}/highlights`,
       {
         method: "POST",
         headers: {

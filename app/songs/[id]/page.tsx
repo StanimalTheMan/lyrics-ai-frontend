@@ -30,7 +30,7 @@ export default function SongDetailPage() {
   useEffect(() => {
     if (!id || !token) return
     fetch(
-      `http://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${id}`,
+      `https://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${id}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -51,7 +51,7 @@ export default function SongDetailPage() {
   useEffect(() => {
     if (!id || !token) return
     fetch(
-      `http://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${id}/highlights`,
+      `https://lyrics-ai-backend-production.up.railway.app:8080/api/songs/${id}/highlights`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
