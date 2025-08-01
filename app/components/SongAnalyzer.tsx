@@ -19,6 +19,8 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
   const [saveSuccess, setSaveSuccess] = useState("")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
+  const lyricsRef = useRef<HTMLDivElement>(null)
+
   const { token } = useAuth()
 
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -182,7 +184,7 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
               onChange={(e) =>
                 setSearchParams({ ...searchParams, track: e.target.value })
               }
-              placeholder="e.g. dtmf"
+              placeholder="e.g. DtMF"
               disabled={isSearching}
             />
           </div>
@@ -212,13 +214,18 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
       {song.title && (
         <div className="song-display">
           <div className="song-info">
-            <Image
-              src={song.imageUrl!}
-              alt={`${song.title} by ${song.artist}`}
-              fill
-              className="song-image"
-              sizes="300px"
-            />
+            <a href={song.spotifyUrl} target="_blank" rel="noopener noreferrer">
+              <Image
+                src={song.imageUrl!}
+                alt={`${song.title} by ${song.artist}`}
+                width={300}
+                height={300}
+                style={{
+                  borderRadius: "0.5rem",
+                  objectFit: "cover",
+                }}
+              />
+            </a>
           </div>
           <div className="song-title">
             {song.title} - {song.artist}
