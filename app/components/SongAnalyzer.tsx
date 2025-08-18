@@ -178,7 +178,9 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
 
     try {
       const response = await fetch(
-        `/pronunciation?text=${encodeURIComponent(selectedText)}`
+        `https://lyrics-ai-backend-production.up.railway.app/api/pronunciation?text=${encodeURIComponent(
+          selectedText
+        )}`
       )
 
       if (!response.ok) {
