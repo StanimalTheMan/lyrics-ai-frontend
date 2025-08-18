@@ -19,7 +19,7 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
   const [saveSuccess, setSaveSuccess] = useState("")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
-  const lyricsRef = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   const { token } = useAuth()
 
@@ -162,12 +162,42 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
   }
 
   // Pronounce selected text using Web Speech API
-  const handlePronounce = () => {
-    if (!selectedText) return
-    const utter = new SpeechSynthesisUtterance(selectedText)
-    utter.lang = detectedLang
-    utter.rate = 0.7
-    window.speechSynthesis.speak(utter)
+  // const handlePronounce = () => {
+  //   if (!selectedText) return
+  //   const utter = new SpeechSynthesisUtterance(selectedText)
+  //   utter.lang = detectedLang
+  //   utter.rate = 0.7
+  //   window.speechSynthesis.speak(utter)
+  // }
+
+  // Try to use AWS Polly to pronounce selected text
+  const handlePronounce = async () => {
+    if (!selectedText.trim()) {
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `/pronunciation?text=${encodeURIComponent(selectedText)}`
+      )
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const audioBlob = await response.blob()
+      const audioUrl = URL.createObjectURL(audioBlob)
+
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl
+        audioRef.current.play().catch((error) => {
+          console.error("Audio playback failed:", error)
+          // Handle cases where autoplay is blocked by the browser
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching or playing audio:", error)
+    }
   }
 
   return (
@@ -254,6 +284,8 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
               >
                 Pronounce Selection
               </button>
+
+              <audio ref={audioRef} controls></audio>
 
               {selectedText && (
                 <div className="selected-text">Selected: {selectedText}</div>
