@@ -51,6 +51,9 @@ export default function LyricsWithActions({
   // Loading state for analyze button
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
+  // ref for audioRef
+  const audioRef = useRef<HTMLAudioElement>(null)
+
   // Update tooltip position when hoveredHighlightIndex changes
   useEffect(() => {
     if (hoveredHighlightIndex === null) return
@@ -160,13 +163,38 @@ export default function LyricsWithActions({
     }
   }
 
-  const handlePronounce = () => {
+  const handlePronounce = async () => {
     if (!selection) return
-    const utter = new window.SpeechSynthesisUtterance(selection.text)
-    utter.lang = detectedLang
-    utter.rate = 0.7
-    window.speechSynthesis.speak(utter)
-    setSelection(null)
+
+    try {
+      const response = await fetch(
+        `https://lyrics-ai-backend-production.up.railway.app/api/pronunciation?text=${encodeURIComponent(
+          selection.text
+        )}`
+      )
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const audioBlob = await response.blob()
+      const audioUrl = URL.createObjectURL(audioBlob)
+
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl
+        audioRef.current.play().catch((error) => {
+          console.error("Audio playback failed:", error)
+          // Handle cases where autoplay is blocked by the browser
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching or playing audio:", error)
+    }
+    // const utter = new window.SpeechSynthesisUtterance(selection.text)
+    // utter.lang = detectedLang
+    // utter.rate = 0.7
+    // window.speechSynthesis.speak(utter)
+    // setSelection(null)
   }
 
   const renderLyrics = () => {
@@ -317,9 +345,16 @@ export default function LyricsWithActions({
               />
             )}
           </button>
-          <button style={{ cursor: "pointer" }} onClick={handlePronounce}>
-            Pronounce
+          <button
+            style={{ cursor: "pointer" }}
+            onClick={handlePronounce}
+            disabled={!selection}
+          >
+            Pronounce Selection
           </button>
+
+          <audio ref={audioRef} controls></audio>
+
           <button
             style={{ cursor: "pointer" }}
             onClick={() => setSelection(null)}
