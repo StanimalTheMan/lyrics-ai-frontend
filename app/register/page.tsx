@@ -68,6 +68,19 @@ export default function RegisterPage() {
         />
         <button type="submit">Register</button>
       </form>
+
+      <div style={{ marginTop: "1rem" }}>
+        <button
+          onClick={() => {
+            // Redirect user to backend OAuth2 endpoint
+            window.location.href =
+              "https://lyrics-ai-backend-production.up.railway.app/oauth2/authorization/google"
+          }}
+          style={{ padding: "0.5rem 1 rem" }}
+        >
+          Sign In With Google
+        </button>
+      </div>
     </div>
   )
 }
