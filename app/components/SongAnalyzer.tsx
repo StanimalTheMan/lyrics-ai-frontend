@@ -1,5 +1,5 @@
 "use client"
-import { TouchEvent, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Song } from "../songs/[id]/page"
 import { useAuth } from "@/context/AuthContext"
@@ -266,11 +266,11 @@ function SongAnalyzer({ onSaveSuccess }: { onSaveSuccess: () => void }) {
           <div className="lyrics-section">
             <div
               className="lyrics-box"
-              // onTouchEnd={(event: TouchEvent) => {
-              //   event.preventDefault()
-              //   const selection = window.getSelection()?.toString()
-              //   if (selection) setSelectedText(selection)
-              // }}
+              onTouchEnd={() => {
+                // event.preventDefault()
+                const selection = window.getSelection()?.toString()
+                if (selection) setSelectedText(selection)
+              }}
               onMouseUp={() => {
                 const selection = window.getSelection()?.toString()
                 if (selection) setSelectedText(selection)

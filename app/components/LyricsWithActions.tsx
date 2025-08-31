@@ -1,5 +1,5 @@
 "use client"
-import React, { TouchEvent, useRef, useState, useEffect } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import { franc } from "franc"
 
 export type Highlight = {
@@ -102,10 +102,27 @@ export default function LyricsWithActions({
     setDetectedLang(langMap[langCode as keyof typeof langMap] || "en-US")
   }, [lyrics])
 
-  // const handleTouchEnd = (event: TouchEvent) => {
-  //   event.preventDefault()
-  //   handleMouseUp()
-  // }
+  const handleTouchEnd = () => {
+    // event.preventDefault()
+    const sel = window.getSelection()
+    if (!sel || sel.isCollapsed) {
+      setSelection(null)
+      return
+    }
+
+    const text = sel.toString()
+    if (!text || !lyricsRef.current) return
+
+    const lyricsText = lyricsRef.current.innerText
+    const start = lyricsText.indexOf(text)
+    if (start === -1) return
+
+    const end = start + text.length
+    const range = sel.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+
+    setSelection({ text, start, end, rect })
+  }
 
   // Handle user text selection
   const handleMouseUp = () => {
@@ -296,7 +313,7 @@ export default function LyricsWithActions({
     >
       <div
         ref={lyricsRef}
-        // onTouchEnd={handleTouchEnd}
+        onTouchEnd={handleTouchEnd}
         onMouseUp={handleMouseUp}
         style={{
           width: "100%",
