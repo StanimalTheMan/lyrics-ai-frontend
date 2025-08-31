@@ -102,10 +102,10 @@ export default function LyricsWithActions({
     setDetectedLang(langMap[langCode as keyof typeof langMap] || "en-US")
   }, [lyrics])
 
-  const handleTouchEnd = (event: TouchEvent) => {
-    event.preventDefault()
-    handleMouseUp()
-  }
+  // const handleTouchEnd = (event: TouchEvent) => {
+  //   event.preventDefault()
+  //   handleMouseUp()
+  // }
 
   // Handle user text selection
   const handleMouseUp = () => {
@@ -296,7 +296,7 @@ export default function LyricsWithActions({
     >
       <div
         ref={lyricsRef}
-        onTouchEnd={handleTouchEnd}
+        // onTouchEnd={handleTouchEnd}
         onMouseUp={handleMouseUp}
         style={{
           width: "100%",
